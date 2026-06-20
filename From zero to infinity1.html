@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="fa"><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>برنامه‌ریز زندگی — ۶۰ روز</title>
+<style>
+  :root{
+    --bg-void:#110D09;--bg-panel:#1C160F;--bg-panel-2:#241C12;--line:#34291A;
+    --amber:#E8A33D;--amber-bright:#FFC85C;--cyan:#4FD1C5;--flame:#FF8A4C;
+    --text:#F2E9DC;--muted:#8C7F6B;--muted-2:#5E5340;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{background:radial-gradient(ellipse 900px 500px at 50% -10%, rgba(79,209,197,0.08), transparent 60%),var(--bg-void);color:var(--text);font-family:'Vazirmatn','Segoe UI','Tahoma',sans-serif;min-height:100vh;padding:28px 16px 80px;}
+  .mono{font-family:'Consolas','SF Mono','Courier New',monospace;}
+  .wrap{max-width:720px;margin:0 auto;}
+  .eyebrow{font-family:'Consolas','SF Mono','Courier New',monospace;font-size:11px;letter-spacing:.2em;color:var(--cyan);text-transform:uppercase;margin-bottom:8px;direction:ltr;text-align:right;}
+  h1{font-size:24px;font-weight:800;margin:0 0 4px;}
+  h1 span{color:var(--cyan);}
+  .subtitle{color:var(--muted);font-size:13.5px;line-height:1.8;margin:0 0 22px;max-width:60ch;}
+  .stats-row{display:flex;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+  .stat-card{flex:1;min-width:130px;background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;padding:14px 16px;}
+  .stat-label{font-family:'Consolas','SF Mono','Courier New',monospace;font-size:10px;letter-spacing:.1em;color:var(--muted);text-transform:uppercase;}
+  .stat-value{font-size:22px;font-weight:800;margin-top:4px;direction:ltr;text-align:right;}
+  .stat-value.flame{color:var(--flame);}
+  .stat-value.amber{color:var(--amber-bright);}
+  .stat-value.cyan{color:var(--cyan);}
+  .overall-bar{height:7px;background:var(--bg-panel);border:1px solid var(--line);border-radius:4px;overflow:hidden;margin-bottom:26px;}
+  .overall-fill{height:100%;background:linear-gradient(90deg,var(--cyan),#7fe3da);transition:width .4s ease;}
+  .day-nav{display:flex;align-items:center;justify-content:space-between;background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:16px;}
+  .nav-btn{background:var(--bg-panel-2);border:1px solid var(--line);color:var(--text);width:36px;height:36px;border-radius:8px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center;transition:.15s;}
+  .nav-btn:hover{border-color:var(--cyan);color:var(--cyan);}
+  .nav-btn:disabled{opacity:.3;cursor:default;}
+  .nav-center{text-align:center;}
+  .nav-day{font-family:'Consolas','SF Mono','Courier New',monospace;font-size:13px;color:var(--muted);letter-spacing:.05em;}
+  .nav-date{font-size:15px;font-weight:700;margin-top:2px;}
+  .today-btn{font-family:'Consolas','SF Mono','Courier New',monospace;font-size:10.5px;color:var(--cyan);background:transparent;border:1px solid var(--line);border-radius:6px;padding:5px 9px;cursor:pointer;}
+  .today-btn:hover{border-color:var(--cyan);}
+  .section{background:var(--bg-panel);border:1px solid var(--line);border-radius:10px;margin-bottom:14px;overflow:hidden;}
+  .section-head{padding:13px 16px;font-family:'Consolas','SF Mono','Courier New',monospace;font-size:11px;letter-spacing:.08em;color:var(--muted);text-transform:uppercase;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;direction:ltr;}
+  .section-head .name{color:var(--text);}
+  .items{padding:4px 12px 10px;}
+  .item{display:flex;align-items:flex-start;gap:10px;padding:9px 8px;border-radius:6px;cursor:pointer;transition:background .15s;}
+  .item:hover{background:var(--bg-panel-2);}
+  .box{font-family:'Consolas','SF Mono','Courier New',monospace;font-size:13px;color:var(--muted-2);flex-shrink:0;width:20px;text-align:center;margin-top:1px;user-select:none;}
+  .item.checked .box{color:var(--cyan);}
+  .item-text{font-size:13.8px;line-height:1.6;}
+  .item.checked .item-text{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--muted-2);}
+  .day-complete-banner{text-align:center;padding:10px;font-family:'Consolas','SF Mono','Courier New',monospace;font-size:12px;color:var(--cyan);letter-spacing:.05em;}
+  .footer{margin-top:26px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;}
+  .footer-note{font-size:11.5px;color:var(--muted-2);font-family:'Consolas','SF Mono','Courier New',monospace;direction:ltr;}
+  .reset-btn{background:transparent;border:1px solid var(--line);color:var(--muted);font-family:'Vazirmatn';font-size:12px;padding:7px 13px;border-radius:7px;cursor:pointer;}
+  .reset-btn:hover{border-color:#7a3b3b;color:#e08585;}
+</style>
+</head>
+<body>
+<div class="wrap" id="app">
+    <div class="eyebrow">LIFE LOG · DAY 1 OF 60</div>
+    <h1>برنامه‌ریز زندگی — <span>بهداشت، زبان، ورزش</span></h1>
+    <p class="subtitle">ورزش، بهداشت شخصی، زبان انگلیسی (مسیر IELTS) و رشد فردی — همه در یک جا.</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">روز پیاپی کامل</div><div class="stat-value flame">0 🔥</div></div>
+      <div class="stat-card"><div class="stat-label">امروز واقعی</div><div class="stat-value amber">1/60</div></div>
+      <div class="stat-card"><div class="stat-label">پیشرفت کل</div><div class="stat-value cyan">0%</div></div>
+    </div>
+    <div class="overall-bar"><div class="overall-fill" style="width:0%"></div></div>
+
+    <div class="day-nav">
+      <button class="nav-btn" onclick="setViewDay(0)" disabled="disabled">‹</button>
+      <div class="nav-center"><div class="nav-day mono">DAY 1</div><div class="nav-date">شنبه 20/6</div></div>
+      <button class="nav-btn" onclick="setViewDay(2)">›</button>
+    </div>
+    
+
+    <div class="section">
+      <div class="section-head"><span class="name">🏃 ورزش</span><span>⏱ ~۱.۷۵ ساعت</span></div>
+      <div class="items"><div class="item " onclick="toggleKey(1,'run')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">دویدن یا طناب زدن صبح (۱۵–۳۰ دقیقه)</span>
+      </div><div class="item " onclick="toggleKey(1,'martial')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">ورزش رزمی (۷۵ دقیقه)</span>
+      </div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🧼 بهداشت و نظم</span><span>⏱ ~۲۰–۳۰ دقیقه</span></div>
+      <div class="items"><div class="item " onclick="toggleKey(1,'shower')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">دوش گرفتن</span>
+      </div><div class="item " onclick="toggleKey(1,'tidy')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">مرتب کردن سریع اتاق</span>
+      </div></div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🗣 زبان انگلیسی — مسیر IELTS</span><span>⏱ ~۱ ساعت</span></div>
+      <div class="items">
+        <div class="item " onclick="toggleKey(1,'vocab')">
+          <span class="box">[&nbsp;&nbsp;]</span>
+          <span class="item-text"><b>لغت:</b> ۱۰ لغت جدید + مرور با فلش‌کارت</span>
+        </div>
+        <div class="item " onclick="toggleKey(1,'skill')">
+          <span class="box">[&nbsp;&nbsp;]</span>
+          <span class="item-text"><b>مهارت:</b> گرامر: حال ساده (ساختار و کاربرد)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🧠 رشد فردی و خانواده</span></div>
+      <div class="items"><div class="item " onclick="toggleKey(1,'reading')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">مطالعه‌ی کتاب آزاد (۲۰–۳۰ دقیقه)</span>
+      </div><div class="item " onclick="toggleKey(1,'family')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">وقت گذروندن با خانواده</span>
+      </div><div class="item " onclick="toggleKey(1,'ideas')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">ایده‌پردازی / کار روی ایده‌های شخصی</span>
+      </div><div class="item " onclick="toggleKey(1,'review')">
+        <span class="box">[&nbsp;&nbsp;]</span>
+        <span class="item-text">خلاصه‌نویسی روزانه‌ی آموخته‌ها</span>
+      </div></div>
+    </div>
+
+    
+
+    <div class="footer">
+      <span class="footer-note">SAVED IN BROWSER · localStorage</span>
+      <button class="reset-btn" onclick="resetAll()">بازنشانی کل برنامه</button>
+    </div>
+  </div>
+<script>
+const TOTAL_DAYS = 60;
+const STORAGE_KEY = "mehdi-life-planner-v1";
+
+const EXERCISE = [
+  {id:"run",    text:"دویدن یا طناب زدن صبح (۱۵–۳۰ دقیقه)"},
+  {id:"martial",text:"ورزش رزمی (۷۵ دقیقه)"}
+];
+const HYGIENE = [
+  {id:"shower", text:"دوش گرفتن"},
+  {id:"tidy",   text:"مرتب کردن سریع اتاق"}
+];
+const HYGIENE_WEEKLY = [
+  {id:"nails",     text:"گرفتن ناخن‌ها"},
+  {id:"deepclean", text:"نظافت عمیق اتاق"}
+];
+const PERSONAL = [
+  {id:"reading",text:"مطالعه‌ی کتاب آزاد (۲۰–۳۰ دقیقه)"},
+  {id:"family", text:"وقت گذروندن با خانواده"},
+  {id:"ideas",  text:"ایده‌پردازی / کار روی ایده‌های شخصی"},
+  {id:"review", text:"خلاصه‌نویسی روزانه‌ی آموخته‌ها"}
+];
+
+const ENGLISH_VOCAB = [
+"۱۰ لغت جدید + مرور با فلش‌کارت","مرور لغات دیروز","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۱",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۲",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۳",
+"مرور یک‌ماهه‌ی کامل لغات (تکرار فاصله‌دار)","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات",
+"۱۰ لغت جدید","مرور کامل ماه اول",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۵",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۶",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۷",
+"۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید","مرور لغات","۱۰ لغت جدید",
+"مرور لغات هفته","مرور کامل لغات هفته ۸",
+"مرور کلی لغات دو ماه (تکرار فاصله‌دار)","استراحت از لغت جدید، تمرکز رو آزمون امروز","مرور لغات ضعیف شناسایی‌شده از آزمون","جمع‌بندی کامل لغات دو ماه"
+];
+const ENGLISH_SKILL = [
+"گرامر: حال ساده (ساختار و کاربرد)","گرامر: حال ساده (منفی و سوالی)","گرامر: حال استمراری","گرامر: حال استمراری (تمرین جمله‌سازی)","شنیداری: ویدیوی زیرنویس‌دار ساده (VOA Learning English)",
+"گرامر: تفاوت حال ساده و استمراری","تست خودسنجی هفته ۱ (گرامر و لغت)",
+"گرامر: گذشته‌ی ساده (افعال باقاعده)","گرامر: گذشته‌ی ساده (افعال بی‌قاعده‌ی پرکاربرد)","گرامر: گذشته‌ی استمراری","شنیداری: ویدیوی سطح پایه (BBC Learning English)","خوندن: متن ساده (News in Levels سطح ۱)",
+"گرامر: تمرین ترکیبی زمان گذشته","تست خودسنجی هفته ۲",
+"گرامر: زمان آینده (will / going to)","گرامر: افعال کمکی (can, must, should)","شنیداری: ویدیوی سطح پایه","خوندن: متن ساده (News in Levels سطح ۱-۲)","گرامر: صفت و قید",
+"نوشتن: ۵ جمله درباره‌ی روزت","تست خودسنجی هفته ۳",
+"گرامر: مقایسه‌ی صفت‌ها (-er/-est)","گرامر: ابراز علاقه و ترجیح","شنیداری: ویدیوی سطح پایه تا متوسط","خوندن: متن سطح ۲","گرامر: حروف اضافه‌ی پرکاربرد",
+"نوشتن: تمرین جمله‌سازی آزاد","تست خودسنجی بزرگ پایان ماه اول 🎉",
+"گرامر: Present Perfect (مقدمه)","گرامر: Present Perfect (تمرین جمله‌سازی)","گرامر: تفاوت Present Perfect و گذشته‌ی ساده","شنیداری: ویدیوی سطح متوسط","خوندن: متن سطح ۲-۳",
+"نوشتن: یک پاراگراف کوتاه درباره‌ی خودت","تست خودسنجی هفته ۵",
+"گرامر: جمله‌ی شرطی نوع اول","گرامر: تمرین جمله‌سازی شرطی","شنیداری: ویدیوی سطح متوسط","خوندن: متن سطح ۳","نوشتن: پاراگراف درباره‌ی هدف‌هات (MIT و مهاجرت)",
+"گرامر: مرور ترکیبی زمان‌ها","تست خودسنجی هفته ۶",
+"مکالمه: شدوینگ یک ویدیوی کوتاه","مکالمه: ادامه‌ی تمرین شدوینگ","خوندن: متن سطح ۳","شنیداری: یک پادکست کوتاه سطح متوسط","مکالمه: تمرین آزاد (با AI یا آینه)",
+"نوشتن: پاراگراف آزاد","تست خودسنجی هفته ۷",
+"گرامر: جمع‌بندی کلی همه‌ی زمان‌ها","مکالمه: تمرین آزاد","خوندن: متن سطح ۳-۴","شنیداری: پادکست یا ویدیوی متوسط","نوشتن: پاراگراف",
+"مکالمه: تمرین آزاد","تست خودسنجی هفته ۸",
+"تمرین گرامر آزاد و جامع","شرکت در آزمون تعیین سطح آنلاین رایگان (مثل EF SET)","مرور نقاط ضعف گرامری شناسایی‌شده","جمع‌بندی مسیر زبان + برنامه‌ریزی ادامه تا IELTS 🎉"
+];
+
+function todayStr(){const d=new Date();return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,'0')+"-"+String(d.getDate()).padStart(2,'0');}
+function dateFromStart(s,o){const d=new Date(s+"T00:00:00");d.setDate(d.getDate()+o);return d;}
+function fmtDate(d){const days=["یکشنبه","دوشنبه","سه‌شنبه","چهارشنبه","پنجشنبه","جمعه","شنبه"];return days[d.getDay()]+" "+d.getDate()+"/"+(d.getMonth()+1);}
+function load(){try{const r=localStorage.getItem(STORAGE_KEY);if(r)return JSON.parse(r);}catch(e){}const f={startDate:todayStr(),days:{}};localStorage.setItem(STORAGE_KEY,JSON.stringify(f));return f;}
+function save(d){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(d));}catch(e){console.error(e);}}
+
+let data = load();
+function realTodayIndex(){const start=new Date(data.startDate+"T00:00:00");const now=new Date();now.setHours(0,0,0,0);const diff=Math.floor((now-start)/86400000)+1;return Math.min(Math.max(diff,1),TOTAL_DAYS);}
+let viewDay = realTodayIndex();
+
+function allItems(day){
+  let list=[...EXERCISE,...HYGIENE];
+  if(day%7===0) list=[...list,...HYGIENE_WEEKLY];
+  list=[...list,...PERSONAL];
+  return list;
+}
+function dayState(day){return data.days[day]||{};}
+function isChecked(day,id){return !!(dayState(day)[id]);}
+function dayCounts(day){
+  const items=allItems(day);const st=dayState(day);
+  let done=items.filter(i=>st[i.id]).length;
+  if(st.vocab)done++; if(st.skill)done++;
+  return {done, total: items.length+2};
+}
+function isDayComplete(day){const c=dayCounts(day);return c.done===c.total;}
+function computeStreak(){let s=0;for(let d=realTodayIndex();d>=1;d--){if(isDayComplete(d))s++;else break;}return s;}
+function overallStats(){let done=0,total=0;for(let d=1;d<=TOTAL_DAYS;d++){const c=dayCounts(d);done+=c.done;total+=c.total;}return{done,total};}
+function toggleKey(day,key){if(!data.days[day])data.days[day]={};data.days[day][key]=!data.days[day][key];save(data);render();}
+function setViewDay(d){viewDay=Math.min(Math.max(d,1),TOTAL_DAYS);render();}
+
+function render(){
+  const today=realTodayIndex();
+  const streak=computeStreak();
+  const overall=overallStats();
+  const overallPct=overall.total?Math.round((overall.done/overall.total)*100):0;
+  const viewDate=dateFromStart(data.startDate,viewDay-1);
+  const st=dayState(viewDay);
+  const vocabChecked=!!st.vocab, skillChecked=!!st.skill;
+  const complete=isDayComplete(viewDay);
+  const isWeeklyDay=viewDay%7===0;
+
+  function renderGroup(list){
+    return list.map(it=>{
+      const chk=isChecked(viewDay,it.id);
+      return `<div class="item ${chk?'checked':''}" onclick="toggleKey(${viewDay},'${it.id}')">
+        <span class="box">${chk?'[×]':'[&nbsp;&nbsp;]'}</span>
+        <span class="item-text">${it.text}</span>
+      </div>`;
+    }).join('');
+  }
+
+  let h=`
+    <div class="eyebrow">LIFE LOG · DAY ${viewDay} OF ${TOTAL_DAYS}</div>
+    <h1>برنامه‌ریز زندگی — <span>بهداشت، زبان، ورزش</span></h1>
+    <p class="subtitle">ورزش، بهداشت شخصی، زبان انگلیسی (مسیر IELTS) و رشد فردی — همه در یک جا.</p>
+
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-label">روز پیاپی کامل</div><div class="stat-value flame">${streak} 🔥</div></div>
+      <div class="stat-card"><div class="stat-label">امروز واقعی</div><div class="stat-value amber">${today}/${TOTAL_DAYS}</div></div>
+      <div class="stat-card"><div class="stat-label">پیشرفت کل</div><div class="stat-value cyan">${overallPct}%</div></div>
+    </div>
+    <div class="overall-bar"><div class="overall-fill" style="width:${overallPct}%"></div></div>
+
+    <div class="day-nav">
+      <button class="nav-btn" onclick="setViewDay(${viewDay-1})" ${viewDay<=1?'disabled':''}>‹</button>
+      <div class="nav-center"><div class="nav-day mono">DAY ${viewDay}</div><div class="nav-date">${fmtDate(viewDate)}</div></div>
+      <button class="nav-btn" onclick="setViewDay(${viewDay+1})" ${viewDay>=TOTAL_DAYS?'disabled':''}>›</button>
+    </div>
+    ${viewDay!==today?`<div style="text-align:left;margin:-10px 2px 16px;"><button class="today-btn" onclick="setViewDay(${today})">برگشت به امروز</button></div>`:''}
+
+    <div class="section">
+      <div class="section-head"><span class="name">🏃 ورزش</span><span>⏱ ~۱.۷۵ ساعت</span></div>
+      <div class="items">${renderGroup(EXERCISE)}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🧼 بهداشت و نظم</span><span>⏱ ~۲۰–۳۰ دقیقه</span></div>
+      <div class="items">${renderGroup(HYGIENE)}${isWeeklyDay?renderGroup(HYGIENE_WEEKLY):''}</div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🗣 زبان انگلیسی — مسیر IELTS</span><span>⏱ ~۱ ساعت</span></div>
+      <div class="items">
+        <div class="item ${vocabChecked?'checked':''}" onclick="toggleKey(${viewDay},'vocab')">
+          <span class="box">${vocabChecked?'[×]':'[&nbsp;&nbsp;]'}</span>
+          <span class="item-text"><b>لغت:</b> ${ENGLISH_VOCAB[viewDay-1]}</span>
+        </div>
+        <div class="item ${skillChecked?'checked':''}" onclick="toggleKey(${viewDay},'skill')">
+          <span class="box">${skillChecked?'[×]':'[&nbsp;&nbsp;]'}</span>
+          <span class="item-text"><b>مهارت:</b> ${ENGLISH_SKILL[viewDay-1]}</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="section-head"><span class="name">🧠 رشد فردی و خانواده</span></div>
+      <div class="items">${renderGroup(PERSONAL)}</div>
+    </div>
+
+    ${complete?`<div class="day-complete-banner">✅ این روز کامله — آفرین</div>`:''}
+
+    <div class="footer">
+      <span class="footer-note">SAVED IN BROWSER · localStorage</span>
+      <button class="reset-btn" onclick="resetAll()">بازنشانی کل برنامه</button>
+    </div>
+  `;
+  document.getElementById('app').innerHTML=h;
+}
+window.setViewDay=setViewDay;
+window.toggleKey=toggleKey;
+window.resetAll=function(){if(!confirm("مطمئنی؟ کل پیشرفت پاک می‌شه."))return;data={startDate:todayStr(),days:{}};save(data);viewDay=1;render();};
+render();
+</script>
+
+
+</body></html>
